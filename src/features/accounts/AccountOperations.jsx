@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { deposit, payLoan, requestLoan, withdraw } from "./accountSlice";
 
 function AccountOperations() {
   const [depositAmount, setDepositAmount] = useState("");
@@ -6,14 +8,30 @@ function AccountOperations() {
   const [loanAmount, setLoanAmount] = useState("");
   const [loanPurpose, setLoanPurpose] = useState("");
   const [currency, setCurrency] = useState("USD");
+  const dispatch = useDispatch();
 
-  function handleDeposit() {}
+  const { isLoading, loanBalance } = useSelector((store) => store.account);
 
-  function handleWithdrawal() {}
+  function handleDeposit() {
+    dispatch(deposit(depositAmount, currency));
 
-  function handleRequestLoan() {}
+    setDepositAmount("");
+  }
 
-  function handlePayLoan() {}
+  function handleWithdrawal() {
+    dispatch(withdraw(withdrawalAmount));
+    setWithdrawalAmount("");
+  }
+
+  function handleRequestLoan() {
+    dispatch(requestLoan(loanAmount, loanPurpose));
+    setLoanAmount("");
+    setLoanPurpose("");
+  }
+
+  function handlePayLoan() {
+    dispatch(payLoan());
+  }
 
   return (
     <div>
@@ -35,7 +53,9 @@ function AccountOperations() {
             <option value="GBP">British Pound</option>
           </select>
 
-          <button onClick={handleDeposit}>Deposit {depositAmount}</button>
+          <button onClick={handleDeposit} disabled={isLoading}>
+            {isLoading ? "Converting..." : `Deposit ${depositAmount}`}
+          </button>
         </div>
 
         <div>
@@ -66,10 +86,12 @@ function AccountOperations() {
           <button onClick={handleRequestLoan}>Request loan</button>
         </div>
 
-        <div>
-          <span>Pay back $X</span>
-          <button onClick={handlePayLoan}>Pay loan</button>
-        </div>
+        {loanBalance > 0 && (
+          <div>
+            <span>Pay back ${loanBalance}</span>
+            <button onClick={handlePayLoan}>Pay loan</button>
+          </div>
+        )}
       </div>
     </div>
   );
