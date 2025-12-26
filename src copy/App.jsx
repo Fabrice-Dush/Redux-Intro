@@ -5,12 +5,7 @@ import BalanceDisplay from "./features/accounts/BalanceDisplay.jsx";
 import { useSelector } from "react-redux";
 
 function App() {
-  const {
-    customer,
-    account: { error },
-  } = useSelector((store) => store);
-
-  console.log(error);
+  const customer = useSelector((store) => store.customer);
 
   return (
     <div>

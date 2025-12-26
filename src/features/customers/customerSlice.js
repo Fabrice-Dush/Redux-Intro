@@ -1,39 +1,40 @@
+import { createSlice } from "@reduxjs/toolkit";
+
 const initialState = {
   fullName: "",
   nationalId: "",
+  createdAt: "",
   error: "",
   isLoading: false,
 };
 
-export default function reducer(state = initialState, action) {
-  switch (action.type) {
-    case "customer/createCustomer":
-      return {
-        ...state,
-        isLoading: false,
-        fullName: action.payload.fullName,
-        nationalId: action.payload.nationalId,
-      };
+const customerSlice = createSlice({
+  name: "customer",
+  initialState,
+  reducers: {
+    createCustomer: {
+      //? necessary when you want to pass more than one argument to the action creator function
+      //? as it only accepts one argument by default
+      prepare: function (fullName, nationalId) {
+        return {
+          payload: {
+            fullName,
+            nationalId,
+            createdAt: new Date().toISOString(),
+          },
+        };
+      },
+      reducer: function (state, action) {
+        state.fullName = action.payload.fullName;
+        state.nationalId = action.payload.nationalId;
+      },
+    },
+    updateName: function (state, action) {
+      state.fullName = action.payload;
+    },
+  },
+});
 
-    case "customer/updateName":
-      return { ...state, fullName: action.payload };
+export default customerSlice.reducer;
 
-    case "loading":
-      return { ...state, isLoading: true };
-
-    case "error":
-      return { ...state, isLoading: false, error: action.payload };
-
-    default:
-      return state;
-  }
-}
-
-//? action creators
-export function createCustomer(fullName, nationalId) {
-  return { type: "customer/createCustomer", payload: { fullName, nationalId } };
-}
-
-export function updateName(newName) {
-  return { type: "customer/updateName", payload: newName };
-}
+export const { createCustomer, updateName } = customerSlice.actions;
