@@ -7,13 +7,16 @@ const initialState = {
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case "customer/create":
+    case "customer/createCustomer":
       return {
         ...state,
         isLoading: false,
         fullName: action.payload.fullName,
         nationalId: action.payload.nationalId,
       };
+
+    case "customer/updateName":
+      return { ...state, fullName: action.payload };
 
     case "loading":
       return { ...state, isLoading: true };
@@ -26,7 +29,11 @@ export default function reducer(state = initialState, action) {
   }
 }
 
-//? reducers
+//? action creators
 export function createCustomer(fullName, nationalId) {
-  return { type: "customer/create", payload: { fullName, nationalId } };
+  return { type: "customer/createCustomer", payload: { fullName, nationalId } };
+}
+
+export function updateName(newName) {
+  return { type: "customer/updateName", payload: newName };
 }
